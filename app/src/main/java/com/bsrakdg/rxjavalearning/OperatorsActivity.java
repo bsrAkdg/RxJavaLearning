@@ -9,6 +9,7 @@ import com.bsrakdg.rxjavalearning.models.Task;
 import com.bsrakdg.rxjavalearning.utils.DataSource;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -74,7 +75,16 @@ public class OperatorsActivity extends AppCompatActivity {
         // intervalOperator();
 
         // TODO Timer
-        timerOperator();
+        // timerOperator();
+
+        // TODO FromArray
+        // fromArrayOperator();
+
+        // TODO FromIterable
+        //overview();
+
+        // TODO FromCallable
+        fromCallableOperator();
     }
 
     private void overview() {
@@ -433,6 +443,71 @@ public class OperatorsActivity extends AppCompatActivity {
                 Log.d(TAG, "onComplete: ");
             }
         });
+    }
+
+    private void fromArrayOperator() {
+
+        Observable<Task> taskObservable = Observable
+                .fromArray(DataSource.createTasksArray())
+                .subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread());
+
+        taskObservable.subscribe(new Observer<Task>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.d(TAG, "onSubscribe: ");
+            }
+
+            @Override
+            public void onNext(@NonNull Task task) {
+                Log.d(TAG, "onNext: " + task.toString());
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e(TAG, "onError: ", e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete: ");
+            }
+        });
+    }
+
+    private void fromCallableOperator() {
+        Observable<List<Task>> callableObservable = Observable
+                .fromCallable(new Callable<List<Task>>() {
+                    @Override
+                    public List<Task> call() throws Exception {
+                        return DataSource.createTasksList(); // think database
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io());
+
+        callableObservable.subscribe(new Observer<List<Task>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.d(TAG, "onSubscribe: ");
+            }
+
+            @Override
+            public void onNext(@NonNull List<Task> tasks) {
+                Log.d(TAG, "onNext: " + tasks.size());
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e(TAG, "onError: ", e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete: ");
+            }
+        });
+
     }
 
     @Override
