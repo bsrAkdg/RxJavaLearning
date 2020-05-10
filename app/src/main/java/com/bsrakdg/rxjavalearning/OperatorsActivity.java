@@ -9,6 +9,7 @@ import com.bsrakdg.rxjavalearning.models.Task;
 import com.bsrakdg.rxjavalearning.utils.DataSource;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -63,12 +64,17 @@ public class OperatorsActivity extends AppCompatActivity {
         // mapOperator();
 
         // TODO: Repeat
-        repeatOperator();
+        //repeatOperator();
 
         // TODO: TakeWhile
         // Add condition to emit
         // takeWhileOperator();
 
+        // TODO Interval
+        // intervalOperator();
+
+        // TODO Timer
+        timerOperator();
     }
 
     private void overview() {
@@ -355,6 +361,66 @@ public class OperatorsActivity extends AppCompatActivity {
             @Override
             public void onNext(@NonNull Integer integer) {
                 Log.d(TAG, "onNext: " + integer);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e(TAG, "onError: ", e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete: ");
+            }
+        });
+    }
+
+    private void intervalOperator() {
+        Observable<Long> intervalObservable = Observable
+                .interval(1, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .takeWhile(aLong -> aLong < 5)
+                .subscribeOn(AndroidSchedulers.mainThread());
+
+        intervalObservable.subscribe(new Observer<Long>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.d(TAG, "onSubscribe: ");
+            }
+
+            @Override
+            public void onNext(@NonNull Long aLong) {
+                Log.d(TAG, "onNext: " + aLong);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.e(TAG, "onError: ", e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete: ");
+            }
+        });
+    }
+
+    private void timerOperator() {
+        Observable<Long> timerObservable = Observable
+                .timer(10, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .takeWhile(aLong -> aLong < 5)
+                .subscribeOn(AndroidSchedulers.mainThread());
+
+        timerObservable.subscribe(new Observer<Long>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.d(TAG, "onSubscribe: ");
+            }
+
+            @Override
+            public void onNext(@NonNull Long aLong) {
+                Log.d(TAG, "onNext: " + aLong);
             }
 
             @Override
